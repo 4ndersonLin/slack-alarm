@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A slack monitor function triggered on a timer.
+Parameters: 
+  TelegramToken:
+    Type: String
+  TelegramChatId:
+    Type: String
+  LineToken:
+    Type: String
+  LineUserId:
+    Type: String
+  ImTools:
+    Type: String
+Resources:
+  ScheduledFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: slack_alarm.lambda_handler
+      Runtime: python3.6
+      CodeUri: src/lambda.zip
+      Environment:
+        Variables:
+          TelegramToken: !Ref TelegramToken
+          TelegramChatId: !Ref TelegramChatId
+          LineToken: !Ref LineToken
+          LineUserId: !Ref LineUserId
+          ImTools: !Ref ImTools
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(3 minutes)
